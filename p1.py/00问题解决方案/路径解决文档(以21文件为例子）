@@ -1,0 +1,79 @@
+"""
+vscode路径需要自己手配，需要添加launch.json文件，在里面加入"cwd": "${workspaceFolder}"
+配置好路径后才能正常运行。
+"""
+#1.基本符号含义
+
+# ./  = 当前目录（工作目录）
+# ../ = 上一级目录
+# /   = 目录分隔符
+
+# 例子：
+'./data/my.txt'        # 当前目录下的 data/my.txt
+'../data/my.txt'       # 上一级目录下的 data/my.txt
+'../../data/my.txt'    # 上两级目录下的 data/my.txt
+'data/my.txt'          # 同上，./ 可以省略
+
+#2.怎么看层级
+# 假设你的工作目录是：
+# python进阶/p1.py/                ← 工作区根目录（workspaceFolder）
+# ├── data/                         ← 你移动后在这
+# ├── 04网编/
+# │   ├── 21.服务端上传文件版.py    ← 你的代码在这
+# │   └── 23.客户端上传文件.py
+
+# 如果你在 21.服务端上传文件版.py 里写路径：
+
+'./data/my.txt'           # 从工作区根目录找
+                          # = python进阶/p1.py/data/my.txt ✅
+
+'./04网编/data/my.txt'    # = python进阶/p1.py/04网编/data/my.txt ✅
+
+#3.路径对照
+# 假设工作目录 = python进阶/p1.py/
+# 假设代码文件 = python进阶/p1.py/04网编/21.服务端上传文件版.py
+
+#路径写法                          →  实际指向
+# './data/my.txt'                  →  python进阶/p1.py/data/my.txt
+# 'data/my.txt'                    →  同上（./ 可省略）
+
+# './04网编/data/my.txt'           →  python进阶/p1.py/04网编/data/my.txt
+# '../data/my.txt'                 →  python进阶/data/my.txt（不推荐）
+
+# '../p1.py/data/my.txt'           →  python进阶/p1.py/data/my.txt
+
+
+#4怎么看层级
+# 每个 ../ 向上走一级
+
+# python进阶/
+# └── p1.py/                        ← 工作区根目录（层级0）
+#     ├── data/                     ← 层级1
+#     ├── 04网编/                   ← 层级1
+#     │   ├── 21.xxx.py             ← 层级2（你的代码在这）
+#     │   └── utils/
+#     │       └── tools.py          ← 层级3
+
+# 从 21.xxx.py 出发：
+'./data/my.txt'           # 从根目录找（因为 cwd 设了根目录）
+'../data/my.txt'          # 上一级 = p1.py/
+                          # = python进阶/p1.py/data/ ✅
+
+# 从 tools.py 出发：
+'../../data/my.txt'       # 上两级 = p1.py/
+                          # = python进阶/p1.py/data/
+
+#5不依赖路径的解决方案
+# os.path.dirname(__file__) 获取的是 .py 文件所在的目录
+import os 
+base_dir = os.path.dirname(__file__)
+
+# 如果代码在 python进阶/p1.py/04网编/21.xxx.py
+# 那 base_dir = python进阶/p1.py/04网编/
+
+file_path = os.path.join(base_dir, 'data', 'my.txt')
+# = python进阶/p1.py/04网编/data/my.txt
+
+file_path = os.path.join(base_dir, '..', 'data', 'my.txt')
+# = python进阶/p1.py/data/my.txt
+
